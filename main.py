@@ -1,10 +1,14 @@
-from keys import api, secret
+import os
+from dotenv import load_dotenv
 from binance.um_futures import UMFutures
 import ta
 import pandas as pd
 from time import sleep
 from binance.error import ClientError
 
+load_dotenv(dotenv_path="keys.env")
+api = os.getenv("api")
+secret = os.getenv("secret")
 client = UMFutures(key=api, secret=secret)
 
 tp = 0.01

@@ -41,4 +41,21 @@ def get_tickers_usdt():
             tickers.append(elem['symbol'])
     return tickers
 
-print(get_tickers_usdt())
+# print(get_tickers_usdt())
+def klines(symbol):
+    try:
+        resp = pd.DataFrame(client.klines(symbol, '1h'))
+        resp = resp.iloc[:, :6]
+        resp.columns = ['Time', 'Open', 'High', 'Low', 'Close', 'Volume']
+        resp = resp.set_index('Time')
+        resp.index = pd.to_datetime(resp.index, unit = 'ms')
+        resp = resp.astype(float)
+        return resp
+    except ClientError as error:
+        print(
+            "Found error. status: {}, error code: {}, error message: {}".format(
+                error.status_code, error.error_code, error.error_message
+            )
+        )       
+
+print(klines('BTCUSDT'))

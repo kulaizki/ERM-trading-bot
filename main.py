@@ -58,4 +58,16 @@ def klines(symbol):
             )
         )       
 
-print(klines('BTCUSDT'))
+# print(klines('BTCUSDT'))
+def set_leverage(symbol, level):
+    try:
+        response = client.change_leverage(
+            symbol=symbol, leverage=level, recvWindow=6000
+        )
+        print(response)
+    except ClientError as error:
+        print(
+            "Found error. status: {}, error code: {}, error message: {}".format(
+                error.status_code, error.error_code, error.error_message
+            )
+        )

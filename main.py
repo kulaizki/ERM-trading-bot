@@ -71,3 +71,16 @@ def set_leverage(symbol, level):
                 error.status_code, error.error_code, error.error_message
             )
         )
+
+def set_mode(symbol, type):
+    try:
+        response = client.change_margin_type(
+            symbol=symbol, marginType=type, recvWindow=6000
+        )
+        print(response)
+    except ClientError as error:
+        print(
+            "Found error. status: {}, error code: {}, error message: {}".format(
+                error.status_code, error.error_code, error.error_message
+            )
+        )

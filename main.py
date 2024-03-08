@@ -96,3 +96,60 @@ def get_qty_precision(symbol):
     for elem in resp:
         if elem['symbol'] == symbol:
             return elem['quantityPrecision']
+
+def open_order(symbol, side):
+    price = float(client.ticker_price(symbol)['price'])
+    price_precision = get_price_precision(symbol)
+    qty_precision = get_qty_precision(symbol)
+    qty = round(volume / price, qty_precision)
+    if side == 'buy':
+        try: 
+            resp1 = client.new_order(
+                symbol=symbol, side='BUY', type='LIMIT', quantity=qty, timeInForce='GTC', price=price
+            )
+            print(symbol, side, "placing order")
+            print(resp1)
+            sleep(2)
+            sl_price = round(price - price * sl, price_precision)
+            resp2 = client.new_order(
+                symbol=symbol, side='SELL', type='STOP_MARKET', quantity=qty, timeInForce='GTC', stopPrice=sl_price
+            )
+            print(resp2)
+            sleep(2)
+            tp_price = round(price + price * tp, price_precision)
+            resp3 = client.new_order(
+                symbol=symbol, side='SELL', type='TAKE_PROFIT_MARKET', quantity=qty, timeInForce='GTC', stopPrice=tp_price
+            )
+            print(resp3)
+        except ClientError as error:
+            print(
+                "Found error. status: {}, error code: {}, error message: {}".format(
+                    error.status_code, error.error_code, error.error_message
+                )
+            )
+    if side == 'sell':
+        try: 
+            resp1 = client.new_order(
+                symbol=symbol, side='SELL', type='LIMIT', quantity=qty, timeInForce='GTC', price=price
+            )
+            print(symbol, side, "placing order")
+            print(resp1)
+            sleep(2)
+            sl_price = round(price + price * sl, price_precision)
+            resp2 = client.new_order(
+                symbol=symbol, side='BUY', type='STOP_MARKET', quantity=qty, timeInForce='GTC', stopPrice=sl_price
+            )
+            print(resp2)
+            sleep(2)
+            tp_price = round(price - price * tp, price_precision)
+            resp3 = client.new_order(
+                symbol=symbol, side='BUY', type='TAKE_PROFIT_MARKET', quantity=qty, timeInForce='GTC', stopPrice=tp_price
+            )
+            print(resp3)
+        except ClientError as error:
+            print(
+                "Found error. status: {}, error code: {}, error message: {}".format(
+                    error.status_code, error.error_code, error.error_message
+                )
+            )
+

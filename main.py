@@ -153,3 +153,18 @@ def open_order(symbol, side):
                 )
             )
 
+def check_positions():
+    try:
+        resp = client.get_position_risk()
+        positions = 0
+        for e in esp:
+            if float(e['positionAmt']) != 0:
+                positions += 1
+        return positions
+    except ClientError as error:
+        print(
+            "Found error. status: {}, error code: {}, error message: {}".format(
+                error.status_code, error.error_code, error.error_message
+            )
+        )
+

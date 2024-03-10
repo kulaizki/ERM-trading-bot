@@ -157,7 +157,7 @@ def check_positions():
     try:
         resp = client.get_position_risk()
         positions = 0
-        for e in esp:
+        for e in resp:
             if float(e['positionAmt']) != 0:
                 positions += 1
         return positions

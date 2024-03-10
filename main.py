@@ -20,9 +20,9 @@ type = 'ISOLATED'
 def get_balance_usdt():
     try:
         response = client.balance(recvWindow=6000)
-        for elem in response:
-            if elem['asset'] == 'USDT':
-                return float(elem['balance'])
+        for e in response:
+            if e['asset'] == 'USDT':
+                return float(e['balance'])
         
     except ClientError as error:
         print(
@@ -36,9 +36,9 @@ print("USDM Balance: ", get_balance_usdt(), " USDT")
 def get_tickers_usdt():
     tickers = []
     resp = client.ticker_price()
-    for elem in resp:
-        if 'USDT' in elem['symbol']:
-            tickers.append(elem['symbol'])
+    for e in resp:
+        if 'USDT' in e['symbol']:
+            tickers.append(e['symbol'])
     return tickers
 
 # print(get_tickers_usdt())
@@ -87,15 +87,15 @@ def set_mode(symbol, type):
 
 def get_price_precision(symbol):
     resp = client.exchange_info()['symbols']
-    for elem in resp:
-        if elem['symbol'] == symbol:
-            return elem['pricePrecision']
+    for e in resp:
+        if e['symbol'] == symbol:
+            return e['pricePrecision']
 
 def get_qty_precision(symbol):
     resp = client.exchange_info()['symbols']
-    for elem in resp:
-        if elem['symbol'] == symbol:
-            return elem['quantityPrecision']
+    for e in resp:
+        if e['symbol'] == symbol:
+            return e['quantityPrecision']
 
 def open_order(symbol, side):
     price = float(client.ticker_price(symbol)['price'])
@@ -161,6 +161,17 @@ def check_positions():
             if float(e['positionAmt']) != 0:
                 positions += 1
         return positions
+    except ClientError as error:
+        print(
+            "Found error. status: {}, error code: {}, error message: {}".format(
+                error.status_code, error.error_code, error.error_message
+            )
+        )
+
+def close_open_orders(symbol):
+    try:
+        response = client.cancel_open_orders(symbol=symbol, recvWindow=6000)
+        print(response)
     except ClientError as error:
         print(
             "Found error. status: {}, error code: {}, error message: {}".format(

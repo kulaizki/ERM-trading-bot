@@ -179,12 +179,13 @@ def close_open_orders(symbol):
             )
         )
 
+# technical analysis
 def check_macd_ema(symbol):
     kl = klines(symbol)
     if ta.trend.macd_diff(kl.close).iloc[-1] > 0 and ta.trend.macd_diff(kl.close).iloc[-2] < 0 \
     and ta.trend.ema_indicator(kl.close, window=200).iloc[-1] < kl.close.iloc[-1]:
         return 'up'
-
+    
     elif ta.trend.macd_diff(kl.close).iloc[-1] < 0 and ta.trend.macd_diff(kl.close).iloc[-2] > 0 \
     and ta.trend.ema_indicator(kl.close, window=200).iloc[-1] > kl.close.iloc[-1]:
         return 'down'
@@ -192,3 +193,42 @@ def check_macd_ema(symbol):
     else:
         return 'none'
 
+order = False
+symbol = ''
+symbols = get_tickers_usdt()
+
+while True:
+    positions = check_positions()
+    print(f'You have {positions} opened positions')
+    if positions == 0:
+        order = False
+        if symbol != '':
+            close_open_orders(symbol)
+    
+    if order == False:
+        for e in symbols:
+            signal = check_macd_ema(e)
+            if signal == 'up':
+                print('Found BUY signal for ', e)
+                set_mode(e, type)
+                sleep(1)
+                set_leverage(e, leverage)
+                sleep(1)
+                print('Placing order for ', e)
+                open_order(e, 'buy')
+                symbol = e
+                order = True
+                break
+            if signal == 'down':
+                print('Found SELL signal for ', e)
+                set_mode(e, type)
+                sleep(1)
+                set_leverage(e, leverage)
+                sleep(1)
+                print('Placing order for ', e)
+                open_order(e, 'sell')
+                symbol = e
+                order = True
+                break
+    print('Waiting 60 sec')
+    sleep(60)

@@ -182,6 +182,7 @@ def close_open_orders(symbol):
 # technical analysis
 def check_macd_ema(symbol):
     kl = klines(symbol)
+    # to be fixed trend.x
     if ta.trend.macd_diff(kl.close).iloc[-1] > 0 and ta.trend.macd_diff(kl.close).iloc[-2] < 0 \
     and ta.trend.ema_indicator(kl.close, window=200).iloc[-1] < kl.close.iloc[-1]:
         return 'up'

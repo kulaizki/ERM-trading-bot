@@ -7,6 +7,7 @@ from time import sleep
 from binance.error import ClientError
 
 load_dotenv(dotenv_path="keys.env")
+# be aware of dynamic ips
 api = os.getenv("api")
 secret = os.getenv("secret")
 client = UMFutures(key=api, secret=secret)
